@@ -9,7 +9,7 @@ public class Server extends Jooby {
 
 	public Server() {
 		assets("/**");
-		assets("/", "index.html");
+		assets("/", "createaccount.html");
 		get("/favicon.ico", () -> Results.noContent());
 	}
 
