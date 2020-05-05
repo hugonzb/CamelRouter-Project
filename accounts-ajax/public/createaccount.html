@@ -1,16 +1,35 @@
 <!DOCTYPE html>
 <!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
+createccount.html
+@author Hugo Baird
 -->
-<html>
+<html ng-app="Customers">
     <head>
-        <title>TODO supply a title</title>
-        <meta charset="windows-1252">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Customers</title>
+        <script src="js/angular.min.js"></script>
+        <script src="js/angular-resource.min.js"></script>
+        <script src="js/customer.js"></script>
     </head>
     <body>
-        <div>TODO write content</div>
+        <div ng-controller = "CustomerController as custCtrl">
+            <table>
+                <thead>
+                    <tr>
+                        <th> Email </th>
+                        <th> Username </th>
+                        <th> Firstname </th>
+                        <th> Lastname </th>
+                        <th> Group </th>
+                        <th> Uri </th>
+                    </tr>
+                </thead>
+            </table>
+            
+            
+            
+            
+            
+            
+        </div>
     </body>
 </html>
