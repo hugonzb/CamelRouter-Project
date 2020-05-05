@@ -34,6 +34,7 @@ public class CreateCustomerBuilder extends RouteBuilder{
             .setBody(constant(null))
             // add authentication token to authorization header
             .setHeader("Authorization", constant("Bearer KiQSsELLtocyS2WDN5w5s_jYaBpXa0h2ex1mep1a"))
+            .marshal().json(JsonLibrary.Gson)
             .setHeader(Exchange.CONTENT_TYPE).constant("application/json")
             // set HTTP method
             .setHeader(Exchange.HTTP_METHOD, constant("POST"))
