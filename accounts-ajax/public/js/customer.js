@@ -10,11 +10,18 @@ module.factory('createCustomer', function ($resource) {
     return $resource('http://localhost:8086/api/accounts', null, {update: {method: 'POST'}});
 });
 
-module.controller('CustomerController', function (getCustomers, createCustomer) {
+module.factory('createCustomerJetty', function ($resource) {
+    return $resource('http://localhost:9000', null, {update: {method: 'POST'}});
+});
+
+module.controller('CustomerController', function (getCustomers, createCustomer, createCustomerJetty) {
     let ctrl = this;
     ctrl.customers - getCustomers.query();
     this.createAccount = function (customer) {
         createCustomer.save({}, customer, function() {
+            ctrl.customers = getCustomers.query();
+        });
+        createCustomerJetty.save({}, customer, function() {
             ctrl.customers = getCustomers.query();
         });
     };
