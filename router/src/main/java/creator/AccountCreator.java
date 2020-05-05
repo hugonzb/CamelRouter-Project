@@ -1,8 +1,8 @@
-package builder;
+package creator;
 
 import domain.Customer;
 
-public class CustomerAccount {
+public class AccountCreator {
     public Customer createAccount(String id, String email){
         Customer customer = new Customer();
         customer.setId(id);

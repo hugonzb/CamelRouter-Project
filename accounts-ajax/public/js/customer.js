@@ -11,7 +11,7 @@ module.factory('createCustomer', function ($resource) {
 });
 
 module.factory('createCustomerJetty', function ($resource) {
-    return $resource('http://localhost:9000', null, {update: {method: 'POST'}});
+    return $resource('http://localhost:9000/createaccount', null, {update: {method: 'POST'}});
 });
 
 module.controller('CustomerController', function (getCustomers, createCustomer, createCustomerJetty) {
