@@ -23,13 +23,29 @@ createccount.html
                         <th> Uri </th>
                     </tr>
                 </thead>
+                <tbody>
+                    <tr ng-repeat="customer in custCtrl.customers">
+                        <td>{{customer.email}}</td>
+                        <td>{{customer.username}}</td>
+                        <td>{{customer.firstname}}</td>
+                        <td>{{customer.lastname}}</td>
+                        <td>{{customer.group}}</td>
+                        <td>{{customer.uri}}</td>    
+                    </tr>
+                </tbody>
             </table>
-            
-            
-            
-            
-            
-            
+            <br><br>
+            <form ng-submit="custCtrl.createAccount(newCustomer)">
+                <label>Email:</label>
+                <input type="text" ng-model="newCustomer.email"><br>
+                <label>Username:</label>
+                <input type="text" ng-model="newCustomer.username"><br>
+                <label>Firstname:</label>
+                <input type="text" ng-model="newCustomer.firstname"><br>
+                <label>Lastname:</label>
+                <input type="text" ng-model="newCustomer.lastname"><br>
+                <button type="submit">Create</button>
+            </form>   
         </div>
     </body>
 </html>

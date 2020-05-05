@@ -7,14 +7,15 @@ module.factory('getCustomers', function ($resource) {
 });
 
 module.factory('createCustomer', function ($resource) {
-    return $resource('http://localhost:7081/api/accounts');
+    return $resource('http://localhost:7081/api/accounts', null, {update: {method: 'POST'}});
 });
 
 module.controller('CustomerController', function (getCustomers, createCustomer) {
-    this.customers - getCustomers.query();
+    let ctrl = this;
+    ctrl.customers - getCustomers.query();
     this.createAccount = function (customer) {
-        createCustomer.save(null, customer, function() {
-            this.customers = getCustomers.query();
+        createCustomer.save({}, customer, function() {
+            ctrl.customers = getCustomers.query();
         });
     };
 });
