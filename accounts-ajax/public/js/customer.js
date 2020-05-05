@@ -3,11 +3,11 @@
 let module = angular.module('Customers', ['ngResource']);
 
 module.factory('getCustomers', function ($resource) {
-    return $resource('http://localhost:7081/api/accounts');
+    return $resource('http://localhost:8086/api/accounts');
 });
 
 module.factory('createCustomer', function ($resource) {
-    return $resource('http://localhost:7081/api/accounts', null, {update: {method: 'POST'}});
+    return $resource('http://localhost:8086/api/accounts', null, {update: {method: 'POST'}});
 });
 
 module.controller('CustomerController', function (getCustomers, createCustomer) {
