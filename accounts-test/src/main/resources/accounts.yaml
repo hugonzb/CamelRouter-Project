@@ -1,0 +1,133 @@
+swagger: '2.0'
+info:
+  title: Customer Accounts
+  version: '1.0'
+  description: REST service for managing customer accounts.
+basePath: /api
+schemes:
+  - http
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+tags:
+  - name: Accounts
+    description: Operations that apply to the collection of customer accounts.
+  - name: Account
+    description: Operations that apply to a single customer account.
+paths:
+  /accounts:
+    get:
+      summary: Get customer accounts.
+      description: Get the complete details for all accounts.
+      operationId: get accounts
+      tags:
+        - Accounts
+      responses:
+        '200':
+          description: OK.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Account'
+    post:
+      summary: Add a new customer account.
+      description: Add a new customer account.
+      operationId: create account
+      tags:
+        - Accounts
+      responses:
+        '201':
+          description: Created.
+          schema:
+            $ref: '#/definitions/Account'
+        '422':
+          description: <b>Not created.</b> Customer account with that ID already exists.
+          schema:
+            $ref: '#/definitions/Error'
+      parameters:
+        - name: Account
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Account'
+  '/accounts/account/{id}':
+    parameters:
+      - name: id
+        description: The customer's account ID.
+        in: path
+        required: true
+        type: string
+    put:
+      summary: Update a customer account.
+      description: Replace an existing customer account with a new version.
+      operationId: update customer
+      tags:
+        - Account
+      responses:
+        '200':
+          description: Updated.
+          schema:
+            $ref: '#/definitions/Account'
+        '404':
+          description: <b>Not updated.</b> Customer not found.
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: <b>Not updated.</b> Changing a customer's account ID address is not permitted via this operation.
+          schema:
+            $ref: '#/definitions/Error'
+      parameters:
+        - name: customer
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Account'
+    delete:
+      summary: Delete a customer account.
+      description: Delete an existing customer account.
+      operationId: delete account
+      tags:
+        - Account
+      responses:
+        '204':
+          description: Deleted.
+        '404':
+          description: <b>Not deleted.</b> Customer not found.
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  Account:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Server generated.
+      username:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      email:
+        type: string
+      group:
+        type: string
+        description: Server generated.
+      uri:
+        type: string
+        description: Server generated.
+    required:
+      - username
+      - firstName
+      - lastName
+      - email
+  ErrorMessage:
+    type: object
+    properties:
+      reason:
+        type: string
+        description: A message describing the reason for the error.
+    required:
+      - reason

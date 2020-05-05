@@ -1,0 +1,69 @@
+plugins {
+	id 'java'
+	id 'org.hidetake.swagger.generator' version '2.18.2'
+}
+
+sourceSets {
+
+	swagger {
+
+		java {
+			srcDirs = ['build/swagger/src/main/java']
+		}
+		
+		resources {
+			srcDirs = []
+		}
+
+		dependencies {
+			implementation group: 'io.swagger.core.v3', name: 'swagger-annotations', version: '2+'
+			implementation group: 'javax.annotation', name: 'javax.annotation-api', version: '1+'
+			implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2+'
+			swaggerCodegen group: 'io.swagger.codegen.v3', name: 'swagger-codegen-cli', version: '3+'
+		}
+
+		// swagger also needs the main dependencies
+		compileClasspath += main.compileClasspath
+	}
+
+	main {
+
+		dependencies {
+			implementation group: 'com.squareup.retrofit2', name: 'converter-gson', version: '2+'
+		}
+
+		// main source needs to be able to see the compiled swagger output
+		compileClasspath += swagger.output
+		runtimeClasspath += swagger.output
+	}
+	
+	test {
+		dependencies {
+			testImplementation group: 'junit', name: 'junit', version: '4.12'
+		}
+
+		// test source needs to be able to see the compliled swagger output
+		compileClasspath += swagger.output
+		runtimeClasspath += swagger.output
+	}
+
+}
+
+build.dependsOn('generateSwaggerCode')
+
+swaggerSources {
+	catalogue {
+		inputFile = file('src/main/resources/sales.yaml')
+		code {
+			outputDir = file('build/swagger')
+			language = 'java'
+			library = 'retrofit2'
+			configFile = file('src/main/resources/config.json')
+			components = [
+				models:true,
+				apis:true,
+				supportingFiles: "CollectionFormats.java,StringUtil.java"
+			]
+		}
+	}
+}

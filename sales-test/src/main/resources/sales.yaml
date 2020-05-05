@@ -1,0 +1,171 @@
+swagger: '2.0'
+info:
+  version: '1.0'
+  title: Sales Service
+  description: REST service for managing customer sales.
+basePath: /api
+tags:
+  - name: Sales
+    description: Operations relating to the collection of sales.
+  - name: Sales for Customer
+    description: Operations relating to the sales for a specific customer.
+schemes:
+  - http
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /sales:
+    post:
+      summary: Add new sale.
+      description: Add a new sale to the system.
+      operationId: add new sale
+      tags:
+        - Sales
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/Sale'
+      responses:
+        '201':
+          description: Created.
+          schema:
+            $ref: '#/definitions/Sale'
+        '422':
+          description: <b>Not created.</b>  Sale data was not acceptable.
+          schema:
+            $ref: '#/definitions/Error'
+  '/sales/{id}':
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+    delete:
+      summary: Delete a sale.
+      description: Delete the sale matching the given ID.
+      operationId: delete sale
+      tags:
+        - Sales
+      responses:
+        '204':
+          description: Deleted.
+        '404':
+          description: Sale not found.
+          schema:
+            $ref: '#/definitions/Error'       
+  '/sales/customer/{id}':
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+    get:
+      summary: Get sales for customer.
+      description: Get all sales for the customer matching the given ID.
+      operationId: get customer sales
+      tags:
+        - Sales for Customer
+      responses:
+        '200':
+          description: OK.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Sale'
+        '404':
+          description: Customer not found.
+          schema:
+            $ref: '#/definitions/Error'
+  '/sales/customer/{id}/summary':
+    get:
+      summary: Get sale summary for customer.
+      description: Get a summary of sales for the customer matching the given ID.
+      operationId: get customer summary
+      tags:
+        - Sales for Customer
+      responses:
+        '200':
+          description: OK.
+          schema:
+            $ref: '#/definitions/Summary'
+        '404':
+          description: Customer not found.
+          schema:
+            $ref: '#/definitions/Error'
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+definitions:
+  Customer:
+    type: object
+    properties:
+      id:
+        type: string
+      email:
+        type: string
+      customer_group_id:
+        type: string
+  Sale:
+    type: object
+    properties:
+      id:
+        type: string
+      sale_date:
+        type: string
+      customer:
+        $ref: '#/definitions/Customer'
+      register_sale_products:
+        type: array
+        items:
+          $ref: '#/definitions/SaleItem'
+      totals:
+        $ref: '#/definitions/Totals'
+  SaleItem:
+    type: object
+    properties:
+      product_id:
+        type: string
+      quantity:
+        type: number
+        format: double
+      price:
+        type: number
+        format: double
+  Totals:
+    type: object
+    properties:
+      total_price:
+        type: number
+        format: double
+      total_tax:
+        type: number
+        format: double
+      total_payment:
+        type: number
+        format: double
+  Summary:
+    type: object
+    properties:
+      numberOfSales:
+        type: integer
+      totalPayment:
+        type: number
+      group:
+        type: string
+      url:
+        type: string
+  ErrorMessage:
+    type: object
+    properties:
+      reason:
+        type: string
+        description: A message describing the reason for the error.
+    required:
+      - reason

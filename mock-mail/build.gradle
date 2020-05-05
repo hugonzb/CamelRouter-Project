@@ -1,0 +1,13 @@
+plugins {
+	id 'application'
+}
+
+dependencies {
+	implementation group: 'com.icegreen', name: 'greenmail', version: '1.5.13'
+}
+
+run {
+	standardInput = System.in
+}
+
+mainClassName = 'mail.MockMailServer'
