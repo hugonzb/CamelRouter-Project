@@ -1,17 +1,18 @@
 package creator;
 
+import domain.Account;
 import domain.Customer;
 
 public class CustomerCreator {
     
-    public Customer createCustomer(String username, String firstName, String lastName, String group, String email){
+    public Customer createCustomer(Account account){
         // Creates a new customer clas using attributes from the Account class received.
         Customer customer = new Customer();
-        customer.setCustomerCode(username);
-        customer.setFirstName(firstName);
-        customer.setLastName(lastName);
+        customer.setCustomerCode(account.getUsername());
+        customer.setFirstName(account.getFirstName());
+        customer.setLastName(account.getLastName());
         customer.setGroup("0afa8de1-147c-11e8-edec-2b197906d816");
-        customer.setEmail(email);
+        customer.setEmail(account.getEmail());
         
         // Returns a new Customer object.
         return customer;

@@ -23,12 +23,7 @@ public class CreateCustomerBuilder extends RouteBuilder{
         
         // Converts the Account object to a Customer object.
         from("jms:queue:create-account")
-            .bean(CustomerCreator.class, "createCustomer("
-                    + "${exchangeProperty.username},"
-                    + "${exchangeProperty.firstName},"
-                    + "${exchangeProperty.lastName},"
-                    + "${exchangeProperty.group},"
-                    + "${exchangeProperty.email})")
+            .bean(CustomerCreator.class, "createCustomer(${body})")
             .log("Send to vend queue: ${body}")
             .to("jms:queue:vend");
         
@@ -37,17 +32,21 @@ public class CreateCustomerBuilder extends RouteBuilder{
             .log("Received Customer pre-marshal: ${body}")
             // remove headers so they don't get sent to Vend
             .removeHeaders("*")
-            // remove message body since you can't send a body in a GET or DELETE
-            .setBody(constant(null))
+
             // add authentication token to authorization header
-            .setHeader("Authorization", constant("Bearer KiQSsELLtocyS2WDN5w5s_jYaBpXa0h2ex1mep1a"))
-            .marshal().json(JsonLibrary.Gson)
-            .log("Send to vend-respond post-marshall: ${body}")
+           .setHeader("Authorization", constant("Bearer KiQSsELLtocyS2WDN5w5s_jYaBpXa0h2ex1mep1a"))
+
+            // marshal to JSON
+            .marshal().json(JsonLibrary.Gson)  // only necessary if the message is an object, not JSON
             .setHeader(Exchange.CONTENT_TYPE).constant("application/json")
+
             // set HTTP method
             .setHeader(Exchange.HTTP_METHOD, constant("POST"))
+            .log("Send to vend: ${body}")
             .to("https://info303otago.vendhq.com/api/2.0/customers")
             .to("jms:queue:vend-response");     
+        
+
         
     }
 }
