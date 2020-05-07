@@ -1,7 +1,9 @@
 package builder;
 
+import creator.AccountCreator;
 import creator.CustomerCreator;
 import domain.Account;
+import domain.Customer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
@@ -34,7 +36,7 @@ public class CreateCustomerBuilder extends RouteBuilder{
             .removeHeaders("*")
 
             // add authentication token to authorization header
-           .setHeader("Authorization", constant("Bearer KiQSsELLtocyS2WDN5w5s_jYaBpXa0h2ex1mep1a"))
+            .setHeader("Authorization", constant("Bearer KiQSsELLtocyS2WDN5w5s_jYaBpXa0h2ex1mep1a"))
 
             // marshal to JSON
             .marshal().json(JsonLibrary.Gson)  // only necessary if the message is an object, not JSON
@@ -46,7 +48,14 @@ public class CreateCustomerBuilder extends RouteBuilder{
             .to("https://info303otago.vendhq.com/api/2.0/customers")
             .to("jms:queue:vend-response");     
         
-
+        from("jms:queue:vend-response")
+            .setBody().jsonpath("$.data")
+            .marshal().json(JsonLibrary.Gson)
+            .unmarshal().json(JsonLibrary.Gson, Customer.class)
+            .log("Customer with ID: ${body}")
+            .bean(AccountCreator.class, "createAccount(${body})")
+            .log("New Account with ID: ${body}")
+            .to("jms:queue:extracted-response");
         
     }
 }

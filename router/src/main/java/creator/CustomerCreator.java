@@ -6,7 +6,7 @@ import domain.Customer;
 public class CustomerCreator {
     
     public Customer createCustomer(Account account){
-        // Creates a new customer clas using attributes from the Account class received.
+        // Creates a new Customer class instance using attributes from the Account class received.
         Customer customer = new Customer();
         customer.setCustomerCode(account.getUsername());
         customer.setFirstName(account.getFirstName());
