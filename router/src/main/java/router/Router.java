@@ -31,7 +31,7 @@ public class Router {
 		camel.setStreamCaching(true);
 
 		// create and add the builder(s)
-		camel.addRoutes(new CreateCustomerBuilder());
+		//camel.addRoutes(new CreateCustomerBuilder());
 		camel.addRoutes(new CreateSaleBuilder());
 
 		// start routing
