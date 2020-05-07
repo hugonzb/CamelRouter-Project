@@ -3,6 +3,7 @@ package builder;
 import domain.Sale;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.JsonLibrary;
 
@@ -17,9 +18,10 @@ public class CreateSaleBuilder extends RouteBuilder{
             .convertBodyTo(String.class)
             .log("Sale received from Vend: ${body}")
             .to("jms:queue:vend-new-sale");
+        
         from("jms:queue:vend-new-sale")
             .unmarshal().json(JsonLibrary.Gson, Sale.class)
-             .log("Formatted sale: ${body}")
+            .log("Formatted sale: ${body}")
             .setProperty("Customer_Id").simple("${body.customer.id}")
             .setProperty("Customer_Group").simple("${body.customer.group}")
             .setProperty("Customer_Email").simple("${body.customer.email}")
@@ -27,7 +29,22 @@ public class CreateSaleBuilder extends RouteBuilder{
             .setProperty("Customer_LastName").simple("${body.customer.lastName}")
             .to("jms:queue:sale-data");
         
-
+        from("jms:queue:sale-data")
+            .marshal().json(JsonLibrary.Gson)
+            .removeHeaders("*")
+            .setHeader(Exchange.HTTP_METHOD, constant("POST"))
+            .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
+            .to("http://localhost:8081/api/sales")
+            .to("jms:queue:get-sale-summary");
+        
+        from("jms:queue:get-sale-summary")
+            .removeHeaders("*")
+            .setBody(constant(null))
+            .setHeader(Exchange.HTTP_METHOD, constant("GET"))
+            .recipientList()
+                .simple("http://localhost:8081/api/sales/customer/${exchangeProperty.Customer_Id}/summary")
+            .log("Customer Summary: ${body}")
+            .to("jms:queue:sale-summary-response");
     }
     public static String getPassword(String prompt) {
         JPasswordField txtPasswd = new JPasswordField();
