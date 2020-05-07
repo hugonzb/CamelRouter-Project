@@ -38,7 +38,7 @@ paths:
         '422':
           description: <b>Not created.</b>  Sale data was not acceptable.
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/ErrorMessage'
   '/sales/{id}':
     parameters:
       - name: id
@@ -57,7 +57,7 @@ paths:
         '404':
           description: Sale not found.
           schema:
-            $ref: '#/definitions/Error'       
+            $ref: '#/definitions/ErrorMessage'       
   '/sales/customer/{id}':
     parameters:
       - name: id
@@ -80,7 +80,7 @@ paths:
         '404':
           description: Customer not found.
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/ErrorMessage'
   '/sales/customer/{id}/summary':
     get:
       summary: Get sale summary for customer.
@@ -96,7 +96,7 @@ paths:
         '404':
           description: Customer not found.
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/ErrorMessage'
     parameters:
       - name: id
         in: path

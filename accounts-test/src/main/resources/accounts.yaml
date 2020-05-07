@@ -45,7 +45,7 @@ paths:
         '422':
           description: <b>Not created.</b> Customer account with that ID already exists.
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/ErrorMessage'
       parameters:
         - name: Account
           in: body
@@ -73,11 +73,11 @@ paths:
         '404':
           description: <b>Not updated.</b> Customer not found.
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/ErrorMessage'
         '409':
           description: <b>Not updated.</b> Changing a customer's account ID address is not permitted via this operation.
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/ErrorMessage'
       parameters:
         - name: customer
           in: body
@@ -96,7 +96,7 @@ paths:
         '404':
           description: <b>Not deleted.</b> Customer not found.
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/ErrorMessage'
 definitions:
   Account:
     type: object
