@@ -74,6 +74,6 @@ public class Customer implements Serializable {
 
     @Override
     public String toString() {
-        return "Customer{" + "id=" + id + ", group=" + group + ", email=" + email + '}';
+        return "Customer{" + "id=" + id + ", group=" + group + ", firstName=" + firstName + ", lastName=" + lastName + ", customerCode=" + customerCode + ", email=" + email + '}';
     }
 }
