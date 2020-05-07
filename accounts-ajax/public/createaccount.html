@@ -15,6 +15,7 @@ createccount.html
             <table>
                 <thead>
                     <tr>
+                        <th> ID </th>
                         <th> Email </th>
                         <th> Username </th>
                         <th> Firstname </th>
@@ -25,6 +26,7 @@ createccount.html
                 </thead>
                 <tbody>
                     <tr ng-repeat="customer in custCtrl.customers">
+                        <td>{{customer.id}}</td>
                         <td>{{customer.email}}</td>
                         <td>{{customer.username}}</td>
                         <td>{{customer.firstName}}</td>

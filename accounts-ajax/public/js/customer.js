@@ -18,9 +18,6 @@ module.controller('CustomerController', function (getCustomers, createCustomer, 
     let ctrl = this;
     ctrl.customers - getCustomers.query();
     this.createAccount = function (customer) {
-        createCustomer.save({}, customer, function() {
-            ctrl.customers = getCustomers.query();
-        });
         createCustomerJetty.save({}, customer, function() {
             ctrl.customers = getCustomers.query();
         });
