@@ -33,6 +33,7 @@ public class CreateCustomerBuilder extends RouteBuilder{
         from("jms:queue:vend")
             .log("Received Customer pre-marshal: ${body}")
             // remove headers so they don't get sent to Vend
+            // remove headers so they don't get sent to Vend
             .removeHeaders("*")
 
             // add authentication token to authorization header
@@ -49,13 +50,20 @@ public class CreateCustomerBuilder extends RouteBuilder{
             .to("jms:queue:vend-response");     
         
         from("jms:queue:vend-response")
+            .log("Vend body: ${body}")
             .setBody().jsonpath("$.data")
             .marshal().json(JsonLibrary.Gson)
             .unmarshal().json(JsonLibrary.Gson, Customer.class)
             .log("Customer with ID: ${body}")
             .bean(AccountCreator.class, "createAccount(${body})")
             .log("New Account with ID: ${body}")
+            .marshal().json(JsonLibrary.Gson)
             .to("jms:queue:extracted-response");
-        
+        from("jms:queue:extracted-response")
+            .removeHeaders("*") // remove headers to stop them being sent to the service
+            .setHeader(Exchange.HTTP_METHOD, constant("POST"))
+            .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
+            .to("http://localhost:8086/api/accounts")
+            .to("jms:queue:displayed-account");
     }
 }

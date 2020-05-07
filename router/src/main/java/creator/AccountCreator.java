@@ -13,7 +13,7 @@ public class AccountCreator {
         account.setFirstName(customer.getFirstName());
         account.setLastName(customer.getLastName());
         account.setGroup(customer.getGroup());
-        account.setEmail(account.getEmail());
+        account.setEmail(customer.getEmail());
         
         // Returns a new Account object.
         return account;
