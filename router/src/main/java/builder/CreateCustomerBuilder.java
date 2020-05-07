@@ -11,7 +11,8 @@ public class CreateCustomerBuilder extends RouteBuilder{
 
     @Override
     public void configure() throws Exception { 
-        // create HTTP endpoint for receiving messages via HTTP
+        
+        // Unmarshals the message received into an Account object.
         from("jetty:http://localhost:9000/createaccount?enableCORS=true")
            // make message in-only so web browser doesn't have to wait on a non-existent response
            .setExchangePattern(ExchangePattern.InOnly)
@@ -20,6 +21,7 @@ public class CreateCustomerBuilder extends RouteBuilder{
            .log("Send to create-account queue: ${body}")
            .to("jms:queue:create-account");
         
+        // Converts the Account object to a Customer object.
         from("jms:queue:create-account")
             .bean(CustomerCreator.class, "createCustomer("
                     + "${exchangeProperty.username},"
@@ -30,6 +32,7 @@ public class CreateCustomerBuilder extends RouteBuilder{
             .log("Send to vend queue: ${body}")
             .to("jms:queue:vend");
         
+        // Sends the JSON Customer object to Vend.
         from("jms:queue:vend")
             .log("Received Customer pre-marshal: ${body}")
             // remove headers so they don't get sent to Vend
@@ -43,9 +46,7 @@ public class CreateCustomerBuilder extends RouteBuilder{
             .setHeader(Exchange.CONTENT_TYPE).constant("application/json")
             // set HTTP method
             .setHeader(Exchange.HTTP_METHOD, constant("POST"))
-            // send it
             .to("https://info303otago.vendhq.com/api/2.0/customers")
-            // store the response
             .to("jms:queue:vend-response");     
         
     }
