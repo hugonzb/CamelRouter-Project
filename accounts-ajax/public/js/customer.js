@@ -14,12 +14,15 @@ module.factory('createCustomerJetty', function ($resource) {
     return $resource('http://localhost:9000/createaccount', null, {update: {method: 'POST'}});
 });
 
-module.controller('CustomerController', function (getCustomers, createCustomer, createCustomerJetty) {
+module.controller('CustomerController', function (getCustomers, createCustomerJetty) {
     let ctrl = this;
-    ctrl.customers - getCustomers.query();
+    ctrl.customers = getCustomers.query();
     this.createAccount = function (customer) {
         createCustomerJetty.save({}, customer, function() {
-            ctrl.customers = getCustomers.query();
+            window.location.reload();
         });
+    };
+    this.reloadCustomers = function () {
+       ctrl.customers = getCustomers.query(); 
     };
 });

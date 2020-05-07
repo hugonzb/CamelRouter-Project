@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-createccount.html
+createaccount.html
 @author Hugo Baird
 -->
 <html ng-app="Customers">
@@ -11,8 +11,8 @@ createccount.html
         <script src="js/customer.js"></script>
     </head>
     <body>
-        <div ng-controller = "CustomerController as custCtrl">
-            <table>
+        <div ng-controller = "CustomerController as custCtrl" ng-init="custCtrl.reloadCustomers()">
+            <table ng-init="custCtrl.reloadCustomers()">
                 <thead>
                     <tr>
                         <th> ID </th>
@@ -35,7 +35,8 @@ createccount.html
                         <td>{{customer.uri}}</td>    
                     </tr>
                 </tbody>
-            </table>
+            </table><br>
+            <button ng-click="custCtrl.reloadCustomers()">Reload Customers</button>
             <br><br>
             <form ng-submit="custCtrl.createAccount(newCustomer)">
                 <label>Email:</label>
