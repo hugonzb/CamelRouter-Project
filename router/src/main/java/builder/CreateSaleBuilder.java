@@ -56,7 +56,10 @@ public class CreateSaleBuilder extends RouteBuilder{
                         .to("jms:queue:update-not-required")
                 .otherwise()
                     .log("Group must be updated: ${body.group} does not equal ${exchangeProperty.Customer_Group}")
-                    .to("jms:queue:update-customer-group");     
+                    .to("jms:queue:update-customer-group");    
+        from("jms:queue:update-customer-group")
+                .log("Updated Customer received")
+                .to("jms:queue:updated-customer-group");
     }
     public static String getPassword(String prompt) {
         JPasswordField txtPasswd = new JPasswordField();
