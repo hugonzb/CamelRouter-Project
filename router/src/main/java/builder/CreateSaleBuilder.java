@@ -1,6 +1,7 @@
 package builder;
 
 import domain.Sale;
+import domain.Summary;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import org.apache.camel.Exchange;
@@ -45,6 +46,17 @@ public class CreateSaleBuilder extends RouteBuilder{
                 .simple("http://localhost:8081/api/sales/customer/${exchangeProperty.Customer_Id}/summary")
             .log("Customer Summary: ${body}")
             .to("jms:queue:sale-summary-response");
+        
+        from("jms:queue:sale-summary-response")
+            .unmarshal().json(JsonLibrary.Gson, Summary.class)
+            .log("Unmarshaled Customer Summary: ${body}")
+                .choice()
+                    .when().simple("${body.group} == ${exchangeProperty.Customer_Group}")
+                        .log("Group does not need updating: ${body.group} does not equal ${exchangeProperty.Customer_Group}")
+                        .to("jms:queue:update-not-required")
+                .otherwise()
+                    .log("Group must be updated: ${body.group} does not equal ${exchangeProperty.Customer_Group}")
+                    .to("jms:queue:update-customer-group");     
     }
     public static String getPassword(String prompt) {
         JPasswordField txtPasswd = new JPasswordField();

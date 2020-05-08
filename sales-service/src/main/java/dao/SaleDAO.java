@@ -14,7 +14,7 @@ public class SaleDAO {
 	private static final Multimap<String, Sale> salesByCustomer = ArrayListMultimap.create();
 	private static final Map<String, Sale> salesBySaleId = new HashMap<>();
 
-	private static final Double THRESHHOLD = 5000.0;
+	private static final Double THRESHHOLD = 100.0;
 
 	static {
 
@@ -60,7 +60,7 @@ public class SaleDAO {
 		summary.setNumberOfSales(custSales.size());
 		Double totalPayment = custSales.stream().mapToDouble(sale -> sale.getTotals().getTotalPayment()).sum();
 		summary.setTotalPayment(totalPayment);
-		summary.setGroup(totalPayment <= THRESHHOLD ? "Regular Customers" : "VIP Customers");
+		summary.setGroup(totalPayment <= THRESHHOLD ? "0afa8de1-147c-11e8-edec-2b197906d816" : "0afa8de1-147c-11e8-edec-201e0f00872c");
 
 		return summary;
 	}
