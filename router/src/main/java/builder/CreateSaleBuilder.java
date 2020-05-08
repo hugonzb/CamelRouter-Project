@@ -1,5 +1,6 @@
 package builder;
 
+import creator.UpdateCustomerCreator;
 import domain.Sale;
 import domain.Summary;
 import javax.swing.JOptionPane;
@@ -9,6 +10,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.JsonLibrary;
 
 public class CreateSaleBuilder extends RouteBuilder{
+    
     @Override
     public void configure() throws Exception {
         from("imaps://outlook.office365.com?username=baihu868@student.otago.ac.nz"
@@ -58,9 +60,12 @@ public class CreateSaleBuilder extends RouteBuilder{
                     .log("Group must be updated: ${body.group} does not equal ${exchangeProperty.Customer_Group}")
                     .to("jms:queue:update-customer-group");    
         from("jms:queue:update-customer-group")
-                .log("Updated Customer received")
+                .log("Customer before updating: ${body}")
+                .bean(UpdateCustomerCreator.class, "updateGroup(${body})")
+                .log("Customer after updating: ${body}")
                 .to("jms:queue:updated-customer-group");
     }
+    
     public static String getPassword(String prompt) {
         JPasswordField txtPasswd = new JPasswordField();
         int resp = JOptionPane.showConfirmDialog(null, txtPasswd, prompt,

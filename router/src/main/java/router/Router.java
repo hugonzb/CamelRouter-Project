@@ -41,5 +41,4 @@ public class Router {
 		System.in.read();
 		camel.stop();
 	}
-
 }
