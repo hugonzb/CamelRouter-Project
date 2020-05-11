@@ -13,6 +13,8 @@ public class CreateSaleBuilder extends RouteBuilder{
     
     @Override
     public void configure() throws Exception {
+        
+        // Read emails with "Vend:SaleUpdate" subject.
         from("imaps://outlook.office365.com?username=baihu868@student.otago.ac.nz"
             + "&password=" + getPassword("Enter your E-Mail password")
             + "&searchTerm.subject=Vend:SaleUpdate"
@@ -22,6 +24,7 @@ public class CreateSaleBuilder extends RouteBuilder{
             .log("Sale received from Vend: ${body}")
             .to("jms:queue:vend-new-sale");
         
+        // Create Sale object and store information in exchange properties.
         from("jms:queue:vend-new-sale")
             .unmarshal().json(JsonLibrary.Gson, Sale.class)
             .log("Formatted sale: ${body}")
@@ -32,14 +35,16 @@ public class CreateSaleBuilder extends RouteBuilder{
             .setProperty("Customer_LastName").simple("${body.customer.lastName}")
             .to("jms:queue:sale-data");
         
+        // POST to sales service.
         from("jms:queue:sale-data")
-            .marshal().json(JsonLibrary.Gson)
             .removeHeaders("*")
-            .setHeader(Exchange.HTTP_METHOD, constant("POST"))
+            .marshal().json(JsonLibrary.Gson)
             .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
+            .setHeader(Exchange.HTTP_METHOD, constant("POST"))
             .to("http://localhost:8081/api/sales")
             .to("jms:queue:get-sale-summary");
         
+        // GET sale summary of customer based on their ID.
         from("jms:queue:get-sale-summary")
             .removeHeaders("*")
             .setBody(constant(null))
@@ -47,9 +52,10 @@ public class CreateSaleBuilder extends RouteBuilder{
             .recipientList()
                 .simple("http://localhost:8081/api/sales/customer/${exchangeProperty.Customer_Id}/summary")
             .log("Customer Summary: ${body}")
-            .to("jms:queue:sale-summary-response");
+            .to("jms:queue:summary-response");
         
-        from("jms:queue:sale-summary-response")
+        // Check to see if customer group needs to be updated.
+        from("jms:queue:summary-response")
             .unmarshal().json(JsonLibrary.Gson, Summary.class)
             .log("Unmarshaled Customer Summary: ${body}")
                 .choice()
@@ -59,11 +65,15 @@ public class CreateSaleBuilder extends RouteBuilder{
                 .otherwise()
                     .log("Group must be updated: ${body.group} does not equal ${exchangeProperty.Customer_Group}")
                     .to("jms:queue:update-customer-group");    
+        
+        // Update customer group to "VIP Customers".
         from("jms:queue:update-customer-group")
                 .log("Customer before updating: ${body}")
                 .bean(UpdateCustomerCreator.class, "updateGroup(${body})")
                 .log("Customer after updating: ${body}")
                 .to("jms:queue:updated-customer-group");
+        
+        // Neede to POST to Vend and PUT to customer service.
     }
     
     public static String getPassword(String prompt) {
