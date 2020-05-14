@@ -60,7 +60,7 @@ public class SaleDAO {
 		summary.setNumberOfSales(custSales.size());
 		Double totalPayment = custSales.stream().mapToDouble(sale -> sale.getTotals().getTotalPayment()).sum();
 		summary.setTotalPayment(totalPayment);
-		summary.setGroup(totalPayment <= THRESHHOLD ? "0afa8de1-147c-11e8-edec-2b197906d816" : "0afa8de1-147c-11e8-edec-201e0f00872c");
+		summary.setGroup(totalPayment <= THRESHHOLD ? "Regular Customers" : "VIP Customers");
 
 		return summary;
 	}

@@ -1,6 +1,7 @@
 package builder;
 
 import creator.UpdateCustomerCreator;
+import creator.changeGroupToId;
 import domain.Sale;
 import domain.Summary;
 import javax.swing.JOptionPane;
@@ -58,8 +59,8 @@ public class CreateSaleBuilder extends RouteBuilder{
         from("jms:queue:summary-response")
             .unmarshal().json(JsonLibrary.Gson, Summary.class)
             .log("Unmarshaled Customer Summary: ${body}")
-            //.setProperty("group").method(changeGroupToId.class, "changeGroup(${body.group})")
-            //.log("Group changed to ID: " )
+            .bean(changeGroupToId.class, "changeGroup(${body})")
+            .log("Group field changed to vend ID group: ${body}" )
                 .choice()
                     .when().simple("${body.group} == ${exchangeProperty.Customer_Group}")
                         .log("Group does not need updating: ${body.group} does not equal ${exchangeProperty.Customer_Group}")
