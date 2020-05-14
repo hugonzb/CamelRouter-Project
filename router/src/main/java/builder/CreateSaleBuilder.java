@@ -58,6 +58,8 @@ public class CreateSaleBuilder extends RouteBuilder{
         from("jms:queue:summary-response")
             .unmarshal().json(JsonLibrary.Gson, Summary.class)
             .log("Unmarshaled Customer Summary: ${body}")
+            //.setProperty("group").method(changeGroupToId.class, "changeGroup(${body.group})")
+            //.log("Group changed to ID: " )
                 .choice()
                     .when().simple("${body.group} == ${exchangeProperty.Customer_Group}")
                         .log("Group does not need updating: ${body.group} does not equal ${exchangeProperty.Customer_Group}")
@@ -69,11 +71,14 @@ public class CreateSaleBuilder extends RouteBuilder{
         // Update customer group to "VIP Customers".
         from("jms:queue:update-customer-group")
                 .log("Customer before updating: ${body}")
-                .bean(UpdateCustomerCreator.class, "updateGroup(${body})")
+                .bean(UpdateCustomerCreator.class, "updateGroup(${exchangeProperty.Customer_Id},"
+                        + "${exchangeProperty.Customer_FirstName}, "
+                        + "${exchangeProperty.Customer_LastName}, "
+                        + "${exchangeProperty.Customer_Email})")
                 .log("Customer after updating: ${body}")
                 .to("jms:queue:updated-customer-group");
+        // Neede to PUT to Vend and customer service.
         
-        // Neede to POST to Vend and PUT to customer service.
     }
     
     public static String getPassword(String prompt) {
