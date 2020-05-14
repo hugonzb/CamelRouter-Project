@@ -77,7 +77,9 @@ public class CreateSaleBuilder extends RouteBuilder{
                         + "${exchangeProperty.Customer_LastName}, "
                         + "${exchangeProperty.Customer_Email})")
                 .log("Customer after updating: ${body}")
-                .to("jms:queue:updated-customer-group");
+                .multicast()
+                .to("jms:queue:put-vend", "jms:queue:put-customer-service");
+        
         // Neede to PUT to Vend and customer service.
         
     }

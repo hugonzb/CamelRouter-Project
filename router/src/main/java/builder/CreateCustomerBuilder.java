@@ -54,10 +54,10 @@ public class CreateCustomerBuilder extends RouteBuilder{
         
         // POSTs the new Account object to the Accounts service.
         from("jms:queue:account")
-            .removeHeaders("*") // remove headers to stop them being sent to the service
-            .setHeader(Exchange.HTTP_METHOD, constant("POST"))
+            .removeHeaders("*")
             .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
+            .setHeader(Exchange.HTTP_METHOD, constant("POST"))
             .to("http://localhost:8086/api/accounts")
-            .to("jms:queue:displayed-account");
+            .to("jms:queue:account-response");
     }
 }
