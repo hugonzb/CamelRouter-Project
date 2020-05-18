@@ -80,8 +80,18 @@ public class CreateSaleBuilder extends RouteBuilder{
                 .multicast()
                 .to("jms:queue:put-vend", "jms:queue:put-customer-service");
         
-        // Neede to PUT to Vend and customer service.
-        
+        // Sends PUT request to Vend to change group of existing customer.
+        from("jms:queue:put-vend")
+            .log("${body.id}")
+            .removeHeaders("*")
+            .setHeader("Authorization", constant("Bearer KiQSsELLtocyS2WDN5w5s_jYaBpXa0h2ex1mep1a"))
+            .marshal().json(JsonLibrary.Gson) 
+            .setHeader(Exchange.CONTENT_TYPE).constant("application/json")
+            .setHeader(Exchange.HTTP_METHOD, constant("PUT"))
+            .log("${exchangeProperty.Customer_Id}")
+            .log("Send to vend: ${body}")
+            .to("https://info303otago.vendhq.com/api/2.0/customers/${exchangeProperty.Customer_Id}")
+            .to("jms:queue:vend-updated-customer-response");  
     }
     
     public static String getPassword(String prompt) {
