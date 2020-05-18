@@ -90,7 +90,8 @@ public class CreateSaleBuilder extends RouteBuilder{
             .setHeader(Exchange.HTTP_METHOD, constant("PUT"))
             .log("${exchangeProperty.Customer_Id}")
             .log("Send to vend: ${body}")
-            .to("https://info303otago.vendhq.com/api/2.0/customers/${exchangeProperty.Customer_Id}")
+            .recipientList()
+                .simple("https://info303otago.vendhq.com/api/2.0/customers/${exchangeProperty.Customer_Id}")
             .to("jms:queue:vend-updated-customer-response");  
     }
     
