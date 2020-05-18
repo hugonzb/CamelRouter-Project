@@ -57,7 +57,6 @@ public class CreateCustomerBuilder extends RouteBuilder{
             .removeHeaders("*")
             .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
             .setHeader(Exchange.HTTP_METHOD, constant("POST"))
-            .to("http://localhost:8086/api/accounts")
-            .to("jms:queue:account-response");
+            .to("http://localhost:8086/api/accounts");
     }
 }

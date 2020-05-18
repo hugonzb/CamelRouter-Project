@@ -88,8 +88,7 @@ public class CreateSaleBuilder extends RouteBuilder{
             .marshal().json(JsonLibrary.Gson) 
             .setHeader(Exchange.CONTENT_TYPE).constant("application/json")
             .setHeader(Exchange.HTTP_METHOD, constant("PUT"))
-            .log("${exchangeProperty.Customer_Id}")
-            .log("Send to vend: ${body}")
+            .log("Send to vend to update: ${body}")
             .recipientList()
                 .simple("https://info303otago.vendhq.com/api/2.0/customers/${exchangeProperty.Customer_Id}")
             .to("jms:queue:vend-updated-customer-response");  
