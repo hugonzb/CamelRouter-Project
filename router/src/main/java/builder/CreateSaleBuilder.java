@@ -1,5 +1,6 @@
 package builder;
 
+import creator.AccountCreator;
 import creator.UpdateCustomerCreator;
 import creator.changeGroupToId;
 import domain.Sale;
@@ -19,8 +20,8 @@ public class CreateSaleBuilder extends RouteBuilder{
         from("imaps://outlook.office365.com?username=baihu868@student.otago.ac.nz"
             + "&password=" + getPassword("Enter your E-Mail password")
             + "&searchTerm.subject=Vend:SaleUpdate"
-            + "&debugMode=false"  // set to true if you want to see the authentication details
-            + "&folderName=INBOX")  // change to whatever folder your Vend messages end up in
+            + "&debugMode=false" 
+            + "&folderName=INBOX") 
             .convertBodyTo(String.class)
             .log("Sale received from Vend: ${body}")
             .to("jms:queue:vend-new-sale");
@@ -78,7 +79,7 @@ public class CreateSaleBuilder extends RouteBuilder{
                         + "${exchangeProperty.Customer_Email})")
                 .log("Customer after updating: ${body}")
                 .multicast()
-                .to("jms:queue:put-vend", "jms:queue:put-customer-service");
+                .to("jms:queue:put-vend", "jms:queue:put-account-service");
         
         // Sends PUT request to Vend to change group of existing customer.
         from("jms:queue:put-vend")
@@ -92,6 +93,18 @@ public class CreateSaleBuilder extends RouteBuilder{
             .recipientList()
                 .simple("https://info303otago.vendhq.com/api/2.0/customers/${exchangeProperty.Customer_Id}")
             .to("jms:queue:vend-updated-customer-response");  
+        
+        // Sends PUT request to Account service at port 8086.
+        from("jms:queue:put-account-service")
+            .bean(AccountCreator.class, "createAccount(${body})")
+            .log("Updated Account: ${body}")
+            .marshal().json(JsonLibrary.Gson)
+            .removeHeaders("*")
+            .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
+            .setHeader(Exchange.HTTP_METHOD, constant("PUT"))
+            .recipientList()
+                .simple("http://localhost:8086/api/accounts/account/${exchangeProperty.Customer_Id}")
+            .to("jms:queue:vend-updated-account-service-response");          
     }
     
     public static String getPassword(String prompt) {
