@@ -107,6 +107,7 @@ public class CreateSaleBuilder extends RouteBuilder{
             .to("jms:queue:vend-updated-account-service-response");          
     }
     
+    // Displays password prompt box for email.
     public static String getPassword(String prompt) {
         JPasswordField txtPasswd = new JPasswordField();
         int resp = JOptionPane.showConfirmDialog(null, txtPasswd, prompt,

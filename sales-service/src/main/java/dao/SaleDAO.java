@@ -14,7 +14,7 @@ public class SaleDAO {
 	private static final Multimap<String, Sale> salesByCustomer = ArrayListMultimap.create();
 	private static final Map<String, Sale> salesBySaleId = new HashMap<>();
 
-	private static final Double THRESHHOLD = 100.0;
+	private static final Double THRESHHOLD = 500.0;
 
 	static {
 
